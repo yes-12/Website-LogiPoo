@@ -1,2 +1,2 @@
 # Website-LogiPoo
-I am makin a website for myself
+I am making a website for myself
