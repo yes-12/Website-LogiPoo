@@ -36,18 +36,27 @@ if (logoutBtn) {
 }
 
 // This is the "Magic Watcher"
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // USER IS LOGGED IN
-        document.getElementById('login-btn').style.display = 'none';
-        document.getElementById('user-info').style.display = 'block';
-        document.getElementById('user-name').innerText = user.displayName;
-    } else {
-        // USER IS LOGGED OUT
-        document.getElementById('login-btn').style.display = 'block';
-        document.getElementById('user-info').style.display = 'none';
-    }
-    
-    // NOW reveal the section smoothly
-    authSection.classList.add('auth-ready');
+window.addEventListener('DOMContentLoaded', () => {
+    const authSection = document.getElementById('auth-section');
+    const loginBtn = document.getElementById('login-btn');
+    const userInfo = document.getElementById('user-info');
+    const userName = document.getElementById('user-name');
+
+    onAuthStateChanged(auth, (user) => {
+        console.log("Auth state changed. User:", user ? user.displayName : "None");
+
+        if (user) {
+            // Logged In State
+            loginBtn.style.display = 'none';
+            userInfo.style.display = 'block';
+            userName.innerText = user.displayName;
+        } else {
+            // Logged Out State
+            loginBtn.style.display = 'block';
+            userInfo.style.display = 'none';
+        }
+        
+        // Final safety check: make sure the container is visible
+        authSection.style.opacity = '1';
+    });
 });

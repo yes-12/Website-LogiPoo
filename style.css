@@ -21,8 +21,14 @@ header {
 
 /* Hide the auth section initially to prevent flickering/jumping */
 #auth-section {
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
+    min-height: 50px; /* Reserves space so the header doesn't jump */
+    display: flex;
+    justify-content: flex-end; /* Pushes the button to the right */
+    padding: 10px;
+}
+
+#user-info, #login-btn {
+    transition: opacity 0.3s ease;
 }
 
 /* We will add this class via JavaScript once we know the login status */
