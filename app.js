@@ -1,53 +1,100 @@
-// 1. Imports (Only one of each!)
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { collection, addDoc, query, where, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { auth, db } from './firebase-config.js';
 
 const provider = new GoogleAuthProvider();
 
-// 2. Run everything after the HTML loads
 window.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
     const userInfo = document.getElementById('user-info');
     const userName = document.getElementById('user-name');
+    const reviewForm = document.getElementById('review-form-container');
+    const loginPrompt = document.getElementById('login-to-review');
 
-    console.log("System Check: Script Active");
-
-    // Handle Login Click
+    // 1. Handle Login/Logout clicks
     if (loginBtn) {
-        loginBtn.onclick = async () => {
-            console.log("Button clicked: Starting Google Sign-In");
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (error) {
-                console.error("Sign-in error:", error);
-                alert("Login failed. Check the console (F12) for details.");
-            }
-        };
+        loginBtn.onclick = () => signInWithPopup(auth, provider);
     }
-
-    // Handle Logout Click
     if (logoutBtn) {
-        logoutBtn.onclick = () => {
-            signOut(auth).then(() => {
-                console.log("Signed out");
-                location.reload();
-            });
-        };
+        logoutBtn.onclick = () => signOut(auth).then(() => location.reload());
     }
 
-    // 3. The "Watcher" - This updates the UI automatically
+    // 2. The Watcher - This updates the UI on BOTH pages
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            console.log("Logged in as:", user.displayName);
-            loginBtn.style.display = 'none';
-            userInfo.style.display = 'inline-block';
-            userName.innerText = user.displayName;
+            if (loginBtn) loginBtn.style.display = 'none';
+            if (userInfo) {
+                userInfo.style.display = 'inline-block';
+                userName.innerText = user.displayName;
+            }
+            if (reviewForm) reviewForm.style.display = 'block';
+            if (loginPrompt) loginPrompt.style.display = 'none';
         } else {
-            console.log("No user session found.");
-            loginBtn.style.display = 'inline-block';
-            userInfo.style.display = 'none';
+            if (loginBtn) loginBtn.style.display = 'inline-block';
+            if (userInfo) userInfo.style.display = 'none';
+            if (reviewForm) reviewForm.style.display = 'none';
+            if (loginPrompt) loginPrompt.style.display = 'block';
         }
     });
+
+    // 3. Initialize Project Page Logic
+    if (window.location.pathname.includes("TaxesTheGame.html")) {
+        loadReviews("taxes-game");
+        
+        const submitBtn = document.getElementById('submit-review');
+        if (submitBtn) {
+            submitBtn.onclick = () => {
+                const text = document.getElementById('review-text').value;
+                if (text) postReview("taxes-game", text);
+            };
+        }
+    }
 });
+
+// --- HELPER FUNCTIONS ---
+async function postReview(projectId, text) {
+    const user = auth.currentUser;
+    if (!user) return alert("You must be logged in!");
+    try {
+        await addDoc(collection(db, "reviews"), {
+            projectId: projectId,
+            uid: user.uid,
+            userName: user.displayName,
+            text: text,
+            timestamp: new Date()
+        });
+        document.getElementById('review-text').value = ""; 
+    } catch (e) { console.error("Error adding review: ", e); }
+}
+
+function loadReviews(projectId) {
+    const reviewsDisplay = document.getElementById('reviews-display');
+    if (!reviewsDisplay) return;
+
+    const q = query(
+        collection(db, "reviews"), 
+        where("projectId", "==", projectId),
+        orderBy("timestamp", "desc")
+    );
+
+    onSnapshot(q, (snapshot) => {
+        reviewsDisplay.innerHTML = ""; 
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            const reviewDiv = document.createElement('div');
+            reviewDiv.className = 'review-card';
+            // Safety check for timestamp to prevent crashes
+            const dateStr = data.timestamp?.toDate ? data.timestamp.toDate().toLocaleDateString() : "Just now";
+            
+            reviewDiv.innerHTML = `
+                <strong>${data.userName}</strong>
+                <p>${data.text}</p>
+                <small>${dateStr}</small>
+                <hr>
+            `;
+            reviewsDisplay.appendChild(reviewDiv);
+        });
+        if (snapshot.empty) reviewsDisplay.innerHTML = "<p>No reviews yet. Be the first!</p>";
+    });
+}

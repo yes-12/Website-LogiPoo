@@ -6,6 +6,15 @@
     <title>Project Detail - TAXES! The Game</title>
     <link rel="stylesheet" href="../style.css"> </head>
 <body>
+    <header>
+        <div id="auth-section">
+            <button id="login-btn" class="btn">Sign In with Google</button>
+            <span id="user-info" style="display:none;">
+                Welcome, <span id="user-name"></span>
+                <button id="logout-btn">Logout</button>
+            </span>
+        </div>
+    </header>
     <nav style="padding: 1rem;">
         <a href="../index.html">← Back to Gallery</a>
     </nav>
@@ -27,6 +36,22 @@
             
             <a href="https://github.com/yes-12/TAXES-The-Game" class="btn">View Source Code on GitHub</a>
         </section>
+
+        <section class="reviews-section">
+            <h2>User Reviews</h2>
+    
+            <div id="review-form-container" style="display:none;">
+                <textarea id="review-text" placeholder="What did you think of the game?"></textarea>
+                <button id="submit-review" class="btn">Post Review</button>
+            </div>
+            <p id="login-to-review">Please use the <b>Sign In</b> button at the top to leave a review.</p>
+
+            <div id="reviews-display">
+                <span id="reviw-card" style="display:none;"></span>
+            </div>
+        </section>
     </article>
+    <script type="module" src="../firebase-config.js"></script>
+    <script type="module" src="../app.js"></script>
 </body>
 </html>
