@@ -39,7 +39,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     // 3. Initialize Project Page Logic
-    if (window.location.pathname.includes("TaxesTheGame.html")) {
+    if (window.location.pathname.includes("taxes-game")) {
         loadReviews("taxes-game");
         
         const submitBtn = document.getElementById('submit-review');
