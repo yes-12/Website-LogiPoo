@@ -19,6 +19,17 @@ header {
     border-bottom: 1px solid #e2e8f0;
 }
 
+/* Hide the auth section initially to prevent flickering/jumping */
+#auth-section {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* We will add this class via JavaScript once we know the login status */
+.auth-ready {
+    opacity: 1 !important;
+}
+
 .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

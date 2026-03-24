@@ -1,4 +1,4 @@
-import { signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { auth, db } from './firebase-config.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -35,15 +35,19 @@ if (logoutBtn) {
     };
 }
 
+// This is the "Magic Watcher"
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // User is signed in, update the UI
+        // USER IS LOGGED IN
         document.getElementById('login-btn').style.display = 'none';
         document.getElementById('user-info').style.display = 'block';
         document.getElementById('user-name').innerText = user.displayName;
     } else {
-        // No user is signed in
+        // USER IS LOGGED OUT
         document.getElementById('login-btn').style.display = 'block';
         document.getElementById('user-info').style.display = 'none';
     }
+    
+    // NOW reveal the section smoothly
+    authSection.classList.add('auth-ready');
 });
