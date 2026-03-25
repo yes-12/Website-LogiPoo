@@ -5,6 +5,31 @@ import { auth, db } from './firebase-config.js';
 const provider = new GoogleAuthProvider();
 
 window.addEventListener('DOMContentLoaded', () => {
+
+    // --- SEARCH FILTER LOGIC ---
+    const searchInput = document.getElementById('project-search');
+    const projectCards = document.querySelectorAll('.card');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+
+            projectCards.forEach(card => {
+                // Get the title and description text
+                const title = card.querySelector('h3').innerText.toLowerCase();
+                const description = card.querySelector('p').innerText.toLowerCase();
+                const tags = card.querySelector('.tags')?.innerText.toLowerCase() || "";
+
+                // Check if query exists in any of those
+                if (title.includes(query) || description.includes(query) || tags.includes(query)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        });
+    }
+
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
     const userInfo = document.getElementById('user-info');
