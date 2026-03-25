@@ -9,6 +9,10 @@
     "cleanUrls": true,
     "rewrites": [
       {
+        "source": "/gallery",
+        "destination": "/gallery.html"
+      }
+      {
         "source": "/taxes-game",
         "destination": "/Projects/TaxesTheGame.html"
       }
