@@ -9,12 +9,16 @@
     "cleanUrls": true,
     "rewrites": [
       {
-        "source": "/gallery",
-        "destination": "/gallery.html"
+        "source": "/projects",
+        "destination": "/projects.html"
       },
       {
         "source": "/taxes-game",
         "destination": "/Projects/TaxesTheGame.html"
+      },
+      {
+        "source": "/artworks",
+        "destination": "/artworks.html"
       }
     ]
   }
